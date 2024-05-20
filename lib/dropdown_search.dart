@@ -120,6 +120,9 @@ class DropdownSearch<T> extends StatefulWidget {
   ///select the selected item in the menu/dialog/bottomSheet of items
   final bool showSelectedItems;
 
+  ///show the selected items in the text field
+  final bool showSelectedItemsInTextField;
+
   ///function that compares two object with the same type to detected if it's the selected item or not
   final DropdownSearchCompareFn<T>? compareFn;
 
@@ -300,6 +303,7 @@ class DropdownSearch<T> extends StatefulWidget {
   })  : assert(!showSelectedItems || T == String || compareFn != null),
         this.searchFieldProps = searchFieldProps ?? TextFieldProps(),
         this.isMultiSelectionMode = false,
+        this.showSelectedItemsInTextField = true,
         this.dropdownBuilderMultiSelection = null,
         this.validatorMultiSelection = null,
         this.onBeforeChangeMultiSelection = null,
@@ -331,6 +335,7 @@ class DropdownSearch<T> extends StatefulWidget {
     this.filterFn,
     this.itemAsString,
     this.showSelectedItems = false,
+    this.showSelectedItemsInTextField = false,
     this.compareFn,
     this.dropdownSearchDecoration,
     this.emptyBuilder,
@@ -532,7 +537,7 @@ class DropdownSearchState<T> extends State<DropdownSearch<T>> {
                         widget.dropdownBuilderSupportsNullItem),
                 isFocused: isFocused,
                 decoration: _manageDropdownDecoration(state),
-                child: _defaultSelectedItemWidget(),
+                child: widget.showSelectedItemsInTextField ? _defaultSelectedItemWidget() : null,
               );
             });
       },
@@ -564,7 +569,7 @@ class DropdownSearchState<T> extends State<DropdownSearch<T>> {
                         widget.dropdownBuilderSupportsNullItem),
                 isFocused: isFocused,
                 decoration: _manageDropdownDecoration(state),
-                child: _defaultSelectedItemWidget(),
+                child: widget.showSelectedItemsInTextField ? _defaultSelectedItemWidget() : null,
               );
             });
       },

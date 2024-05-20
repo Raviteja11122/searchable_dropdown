@@ -42,17 +42,38 @@ class _MyHomePageState extends State<MyHomePage> {
           child: ListView(
             padding: EdgeInsets.all(4),
             children: <Widget>[
-              DropdownSearch<String>(
-                mode: Mode.MENU,
-                showSelectedItems: true,
-                items: ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
-                dropdownSearchDecoration: InputDecoration(
-                  labelText: "Menu mode",
-                  hintText: "country in menu mode",
+              SizedBox(height: 10,),
+              SizedBox(
+                height: 57,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(4)),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: DropdownSearch<String>(
+                          mode: Mode.MENU,
+                          showSelectedItems: true,
+                          items: ["Brazil", "Italia (Disabled)", "Tunisia", 'Canada'],
+                          dropdownSearchDecoration: InputDecoration(
+                            labelText: "Menu mode",
+                            hintText: "country in menu mode",
+                            border: OutlineInputBorder(),
+                          ),
+                          popupItemDisabled: (String s) => s.startsWith('I'),
+                          onChanged: print,
+                          selectedItem: "Brazil",
+                        ),
+                      ),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Color(0x604E4E4E),
+                        ),
+                        height: 2,
+                      )
+                    ],
+                  ),
                 ),
-                popupItemDisabled: (String s) => s.startsWith('I'),
-                onChanged: print,
-                selectedItem: "Brazil",
               ),
               Divider(),
 
