@@ -8,6 +8,8 @@ class CheckBoxWidget extends StatefulWidget {
   final bool isChecked;
   final bool isDisabled;
   final ValueChanged<bool?>? onChanged;
+  final bool interceptCallBacks;
+  final TextDirection textDirection;
 
   CheckBoxWidget({
     Key? key,
@@ -15,6 +17,8 @@ class CheckBoxWidget extends StatefulWidget {
     this.isDisabled = false,
     this.layout,
     this.checkBox,
+    this.interceptCallBacks = false,
+    this.textDirection = TextDirection.ltr,
     required this.onChanged,
   }) : super(key: key);
 
@@ -34,35 +38,40 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
   @override
   void didUpdateWidget(covariant CheckBoxWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isChecked != oldWidget.isChecked)
-      isCheckedNotifier.value = widget.isChecked;
+    if (widget.isChecked != oldWidget.isChecked) isCheckedNotifier.value = widget.isChecked;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return Directionality(
+      textDirection: widget.textDirection,
+      child: ValueListenableBuilder(
         valueListenable: isCheckedNotifier,
         builder: (ctx, bool v, w) {
-          return InkWell(
-            onTap: widget.isDisabled
-                ? null
-                : () {
-                    isCheckedNotifier.value = !v;
-                    if (widget.onChanged != null) widget.onChanged!(v);
-                  },
-            child: IgnorePointer(
-              //to ignore inner clicks or custom clicks from custom layout
-              child: Row(mainAxisSize: MainAxisSize.max, children: [
-                widget.layout != null
-                    ? Expanded(child: widget.layout!(context, v == true))
-                    : Container(),
-                widget.checkBox != null
-                    ? widget.checkBox!(context, v == true)
-                    : Checkbox(
-                        value: v, onChanged: widget.isDisabled ? null : (b) {}),
-              ]),
-            ),
+          var w = Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              widget.layout != null ? Expanded(child: widget.layout!(context, v == true)) : Container(),
+              widget.checkBox != null
+                  ? widget.checkBox!(context, v == true)
+                  : Checkbox(value: v, onChanged: widget.isDisabled ? null : (b) {}),
+            ],
           );
-        });
+
+          if (widget.interceptCallBacks)
+            return w;
+          else
+            return InkWell(
+              onTap: widget.isDisabled
+                  ? null
+                  : () {
+                      isCheckedNotifier.value = !v;
+                      if (widget.onChanged != null) widget.onChanged!(v);
+                    },
+              child: IgnorePointer(child: w),
+            );
+        },
+      ),
+    );
   }
 }
